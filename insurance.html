@@ -1,0 +1,372 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Insurance Application Form</title>
+    <style>
+	.section active{border:10px solid black;}
+         body {font-family: Arial, sans-serif; max-width: 600px; margin: 60px auto; position: relative;
+		top: 10px; width: 100%; padding: 30px 30px;
+		display:flex; justify-content:center; 
+	    text-transform: uppercase; font-weight: 700;
+        font-size: 20px; letter-spacing: 0.05em;
+	    background:#85929e;}
+    .section { display: none; background:#85929e ; margin-bottom: 60px; }
+        .section { display: none; margin-bottom: 20px; }
+        .active { display: block; }
+        label { display: block; margin: 8px 0 4px; }
+        input, select, textarea { width: 100%; padding: 8px; margin-bottom: 12px; }
+        .consent { display: flex; align-items: center; }
+        .consent label { margin: 0; padding-left: 8px; }
+		button {
+		font-size: 10px;
+   width: 100px;
+   height: 30px;
+}
+    </style>
+</head>
+<body>
+<div id="step-1" class="section active">
+    <h2>Select Your Age Group</h2>
+    <form id="age-form">
+        <label>
+            <input type="radio" name="age-group" value="0-30" required> 0-30
+        </label>
+        <label>
+            <input type="radio" name="age-group" value="30-60"> 30-60
+        </label>
+        <label>
+            <input type="radio" name="age-group" value="60above"> 60above
+        </label>
+        <button type="button" onclick="validateAndShowNextSection(2, 'age-form')">Next</button>
+    </form>
+</div>
+<div id="step-2" class="section">
+    <h2>Personal Information</h2>
+    <form id="personal-info-form">
+        <label for="name">Full Name:</label>
+        <input type="text" id="name" name="name" required>
+        <label for="dob">Date of Birth:</label>
+        <input type="date" id="dob" name="dob" required>
+   
+        <label for="gender">Gender:</label>
+        <select id="gender" name="gender" required>
+            <option value="">Select Gender</option>
+            <option value="male">Male</option>
+            <option value="female">Female</option>
+            <option value="other">Other</option>
+        </select>
+
+        <label for="contact">Contact Number:</label>
+        <input type="tel" id="contact" name="contact" pattern="\d{10}" required placeholder="10-digit number">
+        <label for="email">Email Address:</label>
+        <input type="email" id="email" name="email" required>
+        <button type="button" onclick="validateAndShowNextSection(3, 'personal-info-form')">Next</button>
+    </form>
+</div>
+
+
+<div id="step-3" class="section">
+    <h2>Policy Details</h2>
+    <form id="policy-form">
+        <label for="insurance-type">Type of Insurance:</label>
+        <select id="insurance-type" name="insurance-type" required onchange="updatePolicyTerm()">
+            <option value="">Select Insurance Type</option>
+            <option value="health">Health Insurance</option>
+            <option value="auto">Auto Insurance</option>
+            <option value="life">Life Insurance</option>
+            <option value="property">Property Insurance</option>
+        </select>
+        
+        <label for="policy-term">Policy Term:</label>
+        <select id="policy-term" name="policy-term" required onchange="updateCoverageAmount()">
+            <option value="">Select Policy Term</option>
+        </select>
+
+        <label for="coverage-amount">Coverage Amount:</label>
+        <input type="text" id="coverage-amount" name="coverage-amount" readonly placeholder="Coverage amount will display here">
+
+        <button type="button" onclick="validateAndShowNextSection(4, 'policy-form')">Next</button>
+    </form>
+</div>
+
+
+
+<div id="step-4" class="section">
+    <h2>Payment Details</h2>
+    <form id="payment-form" onsubmit="completePayment(event)">
+        <label for="payment-method">Payment Method:</label>
+        <select id="payment-method" name="payment-method" required onchange="updatePaymentDetails()">
+            <option value="">Select Payment Method</option>
+            <option value="credit-card">Credit Card</option>
+            <option value="debit-card">Debit Card</option>
+            <option value="bank-transfer">Bank Transfer</option>
+        </select>
+
+        <div id="credit-card-details" style="display: none;">
+            <label for="credit-card-number">Credit Card Number:</label>
+            <input type="text" id="credit-card-number" name="credit-card-number" maxlength="19" placeholder="1234 5678 9012 3456">
+            
+            <label for="credit-card-expiry">Expiry Date (MM/YY):</label>
+            <input type="text" id="credit-card-expiry" name="credit-card-expiry" maxlength="5" placeholder="MM/YY" required>
+
+            <label for="credit-cvv">CVV:</label>
+            <input type="number" id="credit-cvv" name="cvv" maxlength="3" pattern="\d{3}" placeholder="123">
+        </div>
+        
+        <div id="debit-card-details" style="display: none;">
+            <label for="debit-card-number">Debit Card Number:</label>
+            <input type="text" id="debit-card-number" name="debit-card-number" maxlength="19" placeholder="5678 1234 9012 3456">
+            
+             <label for="debit-card-expiry">Expiry Date (MM/YY):</label>
+             <input type="text" id="debit-card-expiry" name="debit-card-expiry" maxlength="5" placeholder="MM/YY" required>
+
+            <label for="debit-cvv">CVV:</label>
+            <input type="number" id="debit-cvv" name="debit-cvv" maxlength="3" pattern="\d{3}" placeholder="123">
+        </div>
+
+        <div id="bank-details" style="display: none;">
+            <label for="account-number">Account Number:</label>
+            <input type="text" id="account-number" name="account-number" placeholder="Enter Account Number" required>
+            
+            <label for="ifsc-number">IFSC Number:</label>
+            <input type="text" id="ifsc-number" name="ifsc-number">
+        </div>
+
+        <div class="consent">
+            <input type="checkbox" id="consent" name="consent" required>
+            <label for="consent">I consent to the terms and conditions and verify that all information provided is accurate.</label>
+        </div>
+        
+        <button type="submit">Submit Application</button>
+    </form>
+</div>
+
+
+<div id="step-5" class="section">
+    <h2>Payment Successful!</h2>
+    <p>Thank you! Your payment has been successfully completed. Your application is now being processed.</p>
+</div>
+
+<script>
+ document.getElementById("name").addEventListener("input", function () {
+        this.value = this.value.replace(/[^a-zA-Z\s]/g, "");
+    });
+
+    function setDobRange() {
+        const ageGroup = document.querySelector('input[name="age-group"]:checked').value;
+        const dobInput = document.getElementById("dob");
+        const today = new Date();
+        let minDate, maxDate;
+         if (ageGroup === "0-30") {
+            minDate = new Date(today.getFullYear() - 30, today.getMonth(), today.getDate());
+            maxDate = new Date(today.getFullYear() - 0, today.getMonth(), today.getDate());
+        } else if (ageGroup === "30-60") {
+            minDate = new Date(today.getFullYear() - 60, today.getMonth(), today.getDate());
+            maxDate = new Date(today.getFullYear() - 30, today.getMonth(), today.getDate());
+        } else if (ageGroup === "60above") {
+            minDate = new Date(today.getFullYear() - 120, today.getMonth(), today.getDate());
+            maxDate = new Date(today.getFullYear() - 60, today.getMonth(), today.getDate());
+        }
+		dobInput.min = minDate.toISOString().split("T")[0];
+        dobInput.max = maxDate.toISOString().split("T")[0];
+        dobInput.value = "";
+    }
+	document.querySelectorAll('input[name="age-group"]').forEach(radio => {
+        radio.addEventListener('change', setDobRange);
+    });
+document.getElementById("contact").addEventListener("input", function (e) {
+   
+    this.value = this.value.replace(/\D/g, "");
+    if (this.value.length > 10) {
+        this.value = this.value.slice(0, 10);
+    }
+});
+	function setDOBRange(minAge, maxAge) {
+        const dobInput = document.getElementById('dob');
+        const today = new Date();
+        const minDate = new Date(today.getFullYear() - maxAge, today.getMonth(), today.getDate());
+        const maxDate = new Date(today.getFullYear() - minAge, today.getMonth(), today.getDate());
+    }
+    function validateAndShowNextSection(step, formId) {
+        const form = document.getElementById(formId);
+        if (form.checkValidity()) {
+            showNextSection(step);
+        } else {
+            alert("Please fill in all required fields.");
+        }
+    }
+    function showNextSection(step) {
+        document.querySelectorAll('.section').forEach(section => section.classList.remove('active'));
+        document.getElementById('step-' + step).classList.add('active');
+    }
+
+    function validateAndShowNextSection(step, formId) {
+        const form = document.getElementById(formId);
+        if (form.checkValidity()) {
+            showNextSection(step);
+        } else {
+            alert("Please fill in all required fields.");
+        }
+    }
+    
+	function updatePolicyTerm() {
+        const insuranceType = document.getElementById("insurance-type").value;
+        const policyTermField = document.getElementById("policy-term");
+
+        
+        policyTermField.innerHTML = '<option value="">Select Policy Term</option>';
+
+        
+        const policyTerms = {
+            health: ["1 Year", "5 Years", "Lifetime"],
+            auto: ["1 Year", "5 Years", "Lifetime"],
+            life: ["1 Year", "5 Years", "Lifetime"],
+            property: ["1 Year", "5 Years", "Lifetime"]
+        };
+
+        
+        if (policyTerms[insuranceType]) {
+            policyTerms[insuranceType].forEach(term => {
+                const option = document.createElement("option");
+                option.value = term.toLowerCase().replace(" ", "-"); 
+                option.textContent = term;
+                policyTermField.appendChild(option);
+            });
+        }
+
+        
+        document.getElementById("coverage-amount").value = "";
+
+        
+        policyTermField.onchange = updateCoverageAmount;
+    }
+
+    function updateCoverageAmount() {
+        const insuranceType = document.getElementById("insurance-type").value;
+        const policyTerm = document.getElementById("policy-term").value;
+        const coverageAmountField = document.getElementById("coverage-amount");
+
+        const coverageAmounts = {
+            health: { "1-year": "5000", "5-years": "25000", "lifetime": "500000" },
+            auto: { "1-year": "3000", "5-years": "20000", "lifetime": "150000" },
+            life: { "1-year": "10000", "5-years": "100000", "lifetime": "650000" },
+            property: { "1-year": "20000", "5-years": "150000", "lifetime": "880000" }
+        };
+         if (insuranceType && policyTerm && coverageAmounts[insuranceType] && coverageAmounts[insuranceType][policyTerm]) {
+            coverageAmountField.value = `${coverageAmounts[insuranceType][policyTerm]}`;
+        } else {
+            coverageAmountField.value = "";
+        }
+    }
+
+    function validateAndShowNextSection(step, formId) {
+        const form = document.getElementById(formId);
+        if (form.checkValidity()) {
+            showNextSection(step);
+        } else {
+            alert("Please fill in all required fields.");
+        }
+    }
+
+    function showNextSection(step) {
+        document.querySelectorAll('.section').forEach(section => section.classList.remove('active'));
+        document.getElementById('step-' + step).classList.add('active');
+    }
+    const paymentMethod = document.getElementById('payment-method');
+    const creditCardDetails = document.getElementById('credit-card-details');
+    const debitCardDetails = document.getElementById('debit-card-details');
+    const bankDetails = document.getElementById('bank-details');
+
+    function updatePaymentDetails() {
+        resetPaymentDetails();
+        creditCardDetails.style.display = (paymentMethod.value === 'credit-card') ? 'block' : 'none';
+        debitCardDetails.style.display = (paymentMethod.value === 'debit-card') ? 'block' : 'none';
+        bankDetails.style.display = (paymentMethod.value === 'bank-transfer') ? 'block' : 'none';
+    }
+	
+    function resetPaymentDetails() {
+        
+         document.getElementById("credit-card-number").addEventListener("input", function (e) {
+        
+        let value = this.value.replace(/\D/g, '');
+        value = value.replace(/(.{4})/g, '$1 ').trim();
+        this.value = value;
+        if (value.replace(/\s/g, '').length > 16) {
+            this.value = value.slice(0, 19); 
+        }
+    });
+        
+        document.getElementById("credit-card-expiry").value = "";
+        document.getElementById("credit-cvv").value = "";
+        document.getElementById("debit-card-number").addEventListener("input", function (e) {
+        let value = this.value.replace(/\D/g, '');
+
+        value = value.replace(/(.{4})/g, '$1 ').trim();
+        this.value = value;
+
+        
+        if (value.replace(/\s/g, '').length > 16) {
+            this.value = value.slice(0, 19); 
+        }
+    });
+        document.getElementById("debit-card-expiry").value = "";
+        document.getElementById("debit-cvv").value = "";
+        document.getElementById("account-number").value = "";
+        document.getElementById("ifsc-number").value = "";
+       
+        document.getElementById("consent").checked = false;
+    }
+	document.getElementById("card-expiry").addEventListener("input", function () {
+        
+        let value = this.value.replace(/\D/g, "");
+
+        
+        if (value.length >= 3) {
+            value = value.slice(0, 2) + "/" + value.slice(2, 4);
+        }
+
+        this.value = value.slice(0, 5);
+		});
+		 document.getElementById("account-number").addEventListener("input", function (e) {
+        this.value = this.value.replace(/\D/g, "");
+    });
+		document.getElementById("cvv").addEventListener("input", function () {
+        this.value = this.value.replace(/\D/g, "");
+
+        if (this.value.length > 3) {
+            this.value = this.value.slice(0, 3);
+        }
+    });
+	document.getElementById("cvv").addEventListener("input", function () {
+        
+        this.value = this.value.replace(/\D/g, "");
+
+        
+        if (this.value.length > 3) {
+            this.value = this.value.slice(0, 3);
+        }
+    });
+
+    function completePayment(event) {
+        event.preventDefault();
+        alert("Payment Submitted Successfully!");
+        resetPaymentDetails(); 
+    }
+	 
+
+    function completePayment(event) {
+        event.preventDefault();
+        document.querySelectorAll('.section').forEach(section => section.classList.remove('active'));
+        document.getElementById('step-5').classList.add('active');
+    }
+	document.getElementById("account-number").addEventListener("input", function (e) {
+        
+        this.value = this.value.replace(/\D/g, "");
+    });
+	 
+</script>
+
+</body>
+</html>
